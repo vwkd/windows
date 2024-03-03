@@ -1,6 +1,6 @@
 # windows
 
-Sliding, hopping, and tumbling windows over an array
+Sliding, hopping, and tumbling windows over an iterable
 
 
 

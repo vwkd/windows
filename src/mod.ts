@@ -1,13 +1,13 @@
 import { z } from "./deps.ts";
 
 /**
- * Window over an array
+ * Window over an iterable
  */
 export class Windows<T> {
   /**
-   * Array to create window over
+   * Iterator to create window over
    */
-  #array: T[];
+  #iterator: Iterator<T>;
   /**
    * Window size
    */
@@ -25,12 +25,20 @@ export class Windows<T> {
    */
   #wrap: boolean;
   /**
+   * Buffer to cache elements of iterator
+   */
+  #buffer: T[] = [];
+  /**
+   * Flag if iterator is done
+   */
+  #done: boolean = false;
+  /**
    * Current window start index
    */
   #cursor: number;
 
   /**
-   * Create a window over an array
+   * Create a window over an iterable
    *
    * - sliding window if step size is `1`
    * - tumbling window if step size is window size
@@ -38,20 +46,23 @@ export class Windows<T> {
    * - note: if wraps around, never "finishes", indefinitely
    * - note: if doesn't wrap around, the last window may be smaller than window size
    *
-   * @param array array to create window over
-   * @param windowSize window size, greater or equal to `1`, smaller or equal to array length
+   * @param iterable iterable to create window over
+   * @param windowSize window size, greater or equal to `1`
    * @param stepSize step size, greater or equal to `1`, smaller or equal to window size
    * @param wrap wrap around, defaults to `false`
    */
-  constructor(array: T[], windowSize: number, stepSize: number, wrap = false) {
-    const arraySchema = z.array(z.unknown());
-    arraySchema.parse(array);
+  constructor(
+    iterable: Iterable<T>,
+    windowSize: number,
+    stepSize: number,
+    wrap = false,
+  ) {
+    // todo: how to validate `iterable`?
 
     const windowSizeSchema = z
       .number()
       .int()
-      .min(1)
-      .max(array.length);
+      .min(1);
     windowSizeSchema.parse(windowSize);
 
     const stepSizeSchema = z
@@ -64,10 +75,12 @@ export class Windows<T> {
     const wrapSchema = z.boolean();
     wrapSchema.parse(wrap);
 
-    this.#array = array;
+    this.#iterator = iterable[Symbol.iterator]();
     this.#windowSize = windowSize;
     this.#stepSize = stepSize;
     this.#wrap = wrap;
+    this.#buffer = [];
+    this.#done = false;
     this.#cursor = 0;
   }
 
@@ -83,24 +96,57 @@ export class Windows<T> {
 
     if (this.#wrap) {
       for (let i = 0; i < this.#windowSize; i += 1) {
-        const index = (this.#cursor + i) % this.#array.length;
-        window.push(this.#array[index]);
+        const indexMaybe = this.#cursor + i;
+
+        if (indexMaybe >= this.#buffer.length && !this.#done) {
+          const { value, done } = this.#iterator.next();
+
+          if (done) {
+            this.#done = true;
+          } else {
+            this.#buffer.push(value);
+          }
+        }
+
+        // note: is `indexMaybe` as long as iterator is not done, since buffer length is maintained one larger by previous `if` statement
+        const index = indexMaybe % this.#buffer.length;
+        window.push(this.#buffer[index]);
       }
 
-      this.#cursor = (this.#cursor + this.#stepSize) % this.#array.length;
+      const cursorMaybe = this.#cursor + this.#stepSize;
+      // note: is `cursorMaybe` as long as iterator is not done, since buffer length is maintained one larger than window size by previous `for` loop containing `if` statement, and step size is always smaller or equal to window size
+      this.#cursor = cursorMaybe % this.#buffer.length;
     } else {
-      if (this.#cursor >= this.#array.length) {
+      // note: is false as long as iterator is not done, since buffer length is maintained one larger than window size by previous call's `for` loop containing `if` statement, and step size is always smaller or equal to window size
+      // todo: maybe only let cursor > 0 instead of this.#done?
+      if (this.#cursor >= this.#buffer.length && this.#done) {
         return { done: true };
       }
 
       for (let i = 0; i < this.#windowSize; i += 1) {
         const index = this.#cursor + i;
 
-        if (index >= this.#array.length) {
-          break;
+        if (index >= this.#buffer.length) {
+          if (this.#done) {
+            break;
+          }
+
+          const { value, done } = this.#iterator.next();
+
+          if (done) {
+            this.#done = true;
+
+            if (!window.length) {
+              return { done: true };
+            }
+
+            break;
+          } else {
+            this.#buffer.push(value);
+          }
         }
 
-        window.push(this.#array[index]);
+        window.push(this.#buffer[index]);
       }
 
       this.#cursor = this.#cursor + this.#stepSize;
