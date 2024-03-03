@@ -3,7 +3,8 @@ import { z } from "./deps.ts";
 /**
  * Window over an iterable
  */
-export class Windows<T> {
+export class Windows<T>
+  implements Iterator<T[], undefined, undefined>, Iterable<T[]> {
   /**
    * Iterator to create window over
    */
@@ -91,7 +92,7 @@ export class Windows<T> {
    * - note: if doesn't wrap around, last window may be smaller than window size
    * @returns array with next elements
    */
-  next() {
+  next(): IteratorResult<T[], undefined> {
     const window: T[] = [];
 
     if (this.#wrap) {
@@ -122,7 +123,7 @@ export class Windows<T> {
       // note: is false as long as iterator is not done, since buffer length is maintained one larger than window size by previous call's `for` loop containing `if` statement, and step size is always smaller or equal to window size
       // todo: maybe only let cursor > 0 instead of this.#done?
       if (this.#cursor >= this.#buffer.length && this.#done) {
-        return { done: true };
+        return { done: true, value: undefined };
       }
 
       for (let i = 0; i < this.#windowSize; i += 1) {
@@ -139,7 +140,7 @@ export class Windows<T> {
             this.#done = true;
 
             if (!window.length) {
-              return { done: true };
+              return { done: true, value: undefined };
             }
 
             break;
@@ -157,7 +158,7 @@ export class Windows<T> {
     return { done: false, value: window };
   }
 
-  [Symbol.iterator]() {
+  [Symbol.iterator](): this {
     return this;
   }
 }

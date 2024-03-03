@@ -10,7 +10,7 @@ Deno.test("non-wrapping, partial 1", () => {
   assertEquals(buffer.next(), { done: false, value: [1, 2, 3] });
   assertEquals(buffer.next(), { done: false, value: [3, 4, 5] });
   assertEquals(buffer.next(), { done: false, value: [5] });
-  assertEquals(buffer.next(), { done: true });
+  assertEquals(buffer.next(), { done: true, value: undefined });
 });
 
 Deno.test("non-wrapping, partial 1, for..of", () => {
@@ -36,7 +36,7 @@ Deno.test("non-wrapping, partial 2", () => {
   assertEquals(buffer.next(), { done: false, value: [1, 2, 3] });
   assertEquals(buffer.next(), { done: false, value: [3, 4, 5] });
   assertEquals(buffer.next(), { done: false, value: [5, 6] });
-  assertEquals(buffer.next(), { done: true });
+  assertEquals(buffer.next(), { done: true, value: undefined });
 });
 
 Deno.test("non-wrapping, partial 2, for..of", () => {
