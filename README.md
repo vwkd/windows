@@ -7,8 +7,9 @@ Sliding, hopping, and tumbling windows over an iterable
 ## Features
 
 - sliding, hopping, and tumbling windows
-- single pass or wrap around indefinitely
-- iterator, e.g. can use in `for..of`
+- non-wrapping or wrapping windows
+- iterates iterable lazily
+- is itself iterator, e.g. can use in `for..of`
 
 
 
