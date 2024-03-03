@@ -18,7 +18,7 @@ Sliding, hopping, and tumbling windows over an iterable
 - sliding non-wrapping
 
 ```ts
-import { Windows } from "./src/mod.ts";
+import { Windows } from "@vwkd/windows";
 
 const array = [1, 2, 3, 4, 5];
 const windowSize = 3;
@@ -38,7 +38,7 @@ for (const window of buffer) {
 - sliding wrapping
 
 ```ts
-import { Windows } from "./src/mod.ts";
+import { Windows } from "@vwkd/windows";
 
 const array = [1, 2, 3, 4, 5];
 const windowSize = 3;
@@ -60,7 +60,7 @@ for (let i = 0; i < 6; i += 1) {
 - hopping non-wrapping
 
 ```ts
-import { Windows } from "./src/mod.ts";
+import { Windows } from "@vwkd/windows";
 
 const array = [1, 2, 3, 4, 5];
 const windowSize = 3;
@@ -78,7 +78,7 @@ for (const window of buffer) {
 - hopping wrapping
 
 ```ts
-import { Windows } from "./src/mod.ts";
+import { Windows } from "@vwkd/windows";
 
 const array = [1, 2, 3, 4, 5];
 const windowSize = 3;
@@ -100,7 +100,7 @@ for (let i = 0; i < 6; i += 1) {
 - tumbling non-wrapping
 
 ```ts
-import { Windows } from "./src/mod.ts";
+import { Windows } from "@vwkd/windows";
 
 const array = [1, 2, 3, 4, 5];
 const windowSize = 3;
@@ -117,7 +117,7 @@ for (const window of buffer) {
 - tumbling wrapping
 
 ```ts
-import { Windows } from "./src/mod.ts";
+import { Windows } from "@vwkd/windows";
 
 const array = [1, 2, 3, 4, 5];
 const windowSize = 3;
