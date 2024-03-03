@@ -114,8 +114,10 @@ export class Windows<T> {
       }
 
       const cursorMaybe = this.#cursor + this.#stepSize;
-      // note: is `cursorMaybe` as long as iterator is not done, since buffer length is maintained one larger than window size by previous `for` loop containing `if` statement, and step size is always smaller or equal to window size
-      this.#cursor = cursorMaybe % this.#buffer.length;
+      // note: `cursorMaybe` can be buffer length as long as iterator is not done, since buffer length is maintained equal to cursor plus window size by previous `for` loop containing `if` statement and step size can be equal to window size
+      this.#cursor = this.#done
+        ? cursorMaybe % this.#buffer.length
+        : cursorMaybe;
     } else {
       // note: is false as long as iterator is not done, since buffer length is maintained one larger than window size by previous call's `for` loop containing `if` statement, and step size is always smaller or equal to window size
       // todo: maybe only let cursor > 0 instead of this.#done?
