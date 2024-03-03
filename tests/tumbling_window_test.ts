@@ -1,5 +1,5 @@
 import { Windows } from "../src/mod.ts";
-import { assertEquals } from "../src/deps.ts";
+import { assertEquals } from "@std/assert";
 
 Deno.test("non-wrapping, no partial", () => {
   const array = [1, 2, 3, 4, 5, 6];

@@ -1,4 +1,4 @@
-import { z } from "./deps.ts";
+import { z } from "zod";
 
 /**
  * Window over an iterable

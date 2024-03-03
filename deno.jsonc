@@ -2,5 +2,8 @@
   "name": "@vwkd/windows",
   "version": "0.0.3",
   "exports": "./src/mod.ts",
-  "lock": false
+  "imports": {
+    "zod": "npm:zod@3.22",
+    "@std/assert": "jsr:@std/assert@0.218.2"
+  }
 }
