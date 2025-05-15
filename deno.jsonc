@@ -1,6 +1,6 @@
 {
   "name": "@vwkd/windows",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "exports": "./src/mod.ts",
   "imports": {
     "zod": "npm:zod@^3.24.4",
